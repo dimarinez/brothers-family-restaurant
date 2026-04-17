@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, -webkit-text-size-adjust: 100%, -ms-text-size-adjust: 100%">
     <title>Brother's Family Restaurant — San Diego, CA</title>
     <meta name="description" content="Brother's Family Restaurant in San Diego 92120. Home-cooked meals, family atmosphere. Call (619) 287-0880.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,47 +20,204 @@
             --gold: #d4a853;
             --charcoal: #2d2d2d;
             --gray: #6b6b6b;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Lato', sans-serif; color: var(--charcoal); background: var(--cream); }
 
+        *,
+        *::before,
+        *::after {
+            margin: 0; padding: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        *::selection {
+            background: var(--warm-red);
+            color: var(--cream);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--charcoal);
+            background: var(--cream);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* ─── Film Grain Overlay ─── */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            mix-blend-mode: multiply;
+            background-size: 200px 200px;
+        }
+
+        /* ─── Scroll Reveal ─── */
+        .reveal {
+            opacity: 0;
+            -webkit-transform: translateY(40px);
+            -ms-transform: translateY(40px);
+            transform: translateY(40px);
+            -webkit-transition: opacity 0.9s var(--ease-out-expo), -webkit-transform 0.9s var(--ease-out-expo);
+            transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+        }
+        .reveal.visible {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            -ms-transform: translateY(0);
+            transform: translateY(0);
+        }
+
+        /* ─── Navigation ─── */
         nav {
-            position: fixed; top: 0; width: 100%; z-index: 100;
-            background: rgba(74,44,23,0.97); backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: transparent;
+            -webkit-backdrop-filter: blur(0px);
+            backdrop-filter: blur(0px);
+            padding: 1.25rem 2rem;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-transition: background 0.5s var(--ease-out-expo), padding 0.5s var(--ease-out-expo), -webkit-backdrop-filter 0.5s var(--ease-out-expo);
+            transition: background 0.5s var(--ease-out-expo), padding 0.5s var(--ease-out-expo), backdrop-filter 0.5s var(--ease-out-expo);
+        }
+        nav.scrolled {
+            background: rgba(74,44,23,0.97);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            box-shadow: 0 4px 30px rgba(74,44,23,0.3);
         }
         .nav-brand {
             font-family: 'Playfair Display', serif;
             color: var(--cream); font-size: 1.3rem; font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links {
+            display: -webkit-flex;
+            display: flex;
+            gap: 2rem; list-style: none;
+        }
         .nav-links a {
             color: rgba(253,246,236,0.8); text-decoration: none;
             font-size: 0.85rem; font-weight: 400; letter-spacing: 1px;
-            text-transform: uppercase; transition: color 0.3s;
+            text-transform: uppercase;
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 1.5px;
+            background: var(--gold);
+            -webkit-transition: width 0.4s var(--ease-out-expo);
+            transition: width 0.4s var(--ease-out-expo);
         }
         .nav-links a:hover { color: var(--gold); }
-        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
-        .hamburger span { width: 25px; height: 2px; background: var(--gold); }
+        .nav-links a:hover::after { width: 100%; }
 
+        .hamburger {
+            display: none;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            gap: 5px; cursor: pointer; background: none; border: none;
+        }
+        .hamburger span {
+            width: 25px; height: 2px; background: var(--gold);
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+        /* ─── Hero ─── */
         .hero {
             min-height: 100vh;
+            min-height: 100dvh;
             background: linear-gradient(160deg, var(--brown) 0%, var(--brown-light) 50%, var(--warm-red-dark) 100%);
-            display: flex; align-items: center; justify-content: center;
-            text-align: center; padding: 6rem 2rem;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem;
             position: relative;
+            overflow: hidden;
         }
         .hero::before {
             content: '';
             position: absolute; inset: 0;
             background: radial-gradient(ellipse at 50% 30%, rgba(230,126,34,0.08) 0%, transparent 60%);
         }
+
+        /* Warm floating orbs */
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            -webkit-filter: blur(80px);
+            pointer-events: none;
+            -webkit-animation: orbFloat 8s ease-in-out infinite;
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+        .hero-orb--1 {
+            width: 350px; height: 350px;
+            background: rgba(212,168,83,0.12);
+            top: 10%; left: -5%;
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+        }
+        .hero-orb--2 {
+            width: 280px; height: 280px;
+            background: rgba(192,57,43,0.1);
+            bottom: 10%; right: -3%;
+            -webkit-animation-delay: -3s;
+            animation-delay: -3s;
+        }
+        .hero-orb--3 {
+            width: 200px; height: 200px;
+            background: rgba(230,126,34,0.08);
+            top: 50%; left: 60%;
+            -webkit-animation-delay: -5s;
+            animation-delay: -5s;
+        }
+
+        @-webkit-keyframes orbFloat {
+            0%, 100% { -webkit-transform: translate(0, 0) scale(1); transform: translate(0, 0) scale(1); }
+            33% { -webkit-transform: translate(30px, -20px) scale(1.05); transform: translate(30px, -20px) scale(1.05); }
+            66% { -webkit-transform: translate(-20px, 15px) scale(0.95); transform: translate(-20px, 15px) scale(0.95); }
+        }
+        @keyframes orbFloat {
+            0%, 100% { -webkit-transform: translate(0, 0) scale(1); transform: translate(0, 0) scale(1); }
+            33% { -webkit-transform: translate(30px, -20px) scale(1.05); transform: translate(30px, -20px) scale(1.05); }
+            66% { -webkit-transform: translate(-20px, 15px) scale(0.95); transform: translate(-20px, 15px) scale(0.95); }
+        }
+
         .hero-content { position: relative; z-index: 1; max-width: 700px; }
         .hero-emoji { font-size: 3rem; margin-bottom: 1rem; }
         .hero h1 {
             font-family: 'Playfair Display', serif;
-            color: var(--cream); font-size: 3.5rem;
+            color: var(--cream);
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
             font-weight: 700; line-height: 1.15; margin-bottom: 0.5rem;
         }
         .hero h1 span { color: var(--gold); }
@@ -67,32 +225,203 @@
             color: var(--gold); font-size: 0.9rem;
             letter-spacing: 4px; text-transform: uppercase; margin-bottom: 1.5rem;
         }
-        .hero p { color: rgba(253,246,236,0.7); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2.5rem; }
+        .hero p {
+            color: rgba(253,246,236,0.7); font-size: 1.05rem;
+            line-height: 1.7; margin-bottom: 2.5rem;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem; left: 50%;
+            -webkit-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            -webkit-align-items: center;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(253,246,236,0.4);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            -webkit-animation: scrollPulse 2s ease-in-out infinite;
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        .scroll-indicator .scroll-line {
+            width: 1px; height: 30px;
+            background: linear-gradient(to bottom, rgba(253,246,236,0.4), transparent);
+        }
+        @-webkit-keyframes scrollPulse {
+            0%, 100% { opacity: 1; -webkit-transform: translateX(-50%) translateY(0); }
+            50% { opacity: 0.5; -webkit-transform: translateX(-50%) translateY(6px); }
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 0.5; transform: translateX(-50%) translateY(6px); }
+        }
+
+        /* ─── Buttons ─── */
         .btn {
             display: inline-block; padding: 0.9rem 2.5rem;
             text-decoration: none; font-weight: 600;
-            font-size: 0.9rem; border-radius: 50px; transition: all 0.3s;
+            font-size: 0.9rem; border-radius: 50px;
+            -webkit-transition: all 0.4s var(--ease-out-expo);
+            transition: all 0.4s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
-        .btn-warm { background: var(--warm-red); color: var(--cream); }
-        .btn-warm:hover { background: var(--orange); }
-        .btn-outline { border: 1.5px solid rgba(253,246,236,0.4); color: var(--cream); margin-left: 1rem; }
+        .btn-warm {
+            background: var(--warm-red); color: var(--cream);
+            border: none;
+        }
+        .btn-warm::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--orange);
+            -webkit-transform: scaleX(0);
+            -ms-transform: scaleX(0);
+            transform: scaleX(0);
+            -webkit-transform-origin: left;
+            -ms-transform-origin: left;
+            transform-origin: left;
+            -webkit-transition: -webkit-transform 0.5s var(--ease-out-expo);
+            transition: transform 0.5s var(--ease-out-expo);
+            border-radius: 50px;
+            z-index: -1;
+        }
+        .btn-warm:hover::before {
+            -webkit-transform: scaleX(1);
+            -ms-transform: scaleX(1);
+            transform: scaleX(1);
+        }
+        .btn-warm:hover { background: var(--warm-red); }
+
+        .btn-outline {
+            border: 1.5px solid rgba(253,246,236,0.4);
+            color: var(--cream); margin-left: 1rem;
+            background: transparent;
+        }
+        .btn-outline::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(212,168,83,0.15);
+            -webkit-transform: scaleX(0);
+            -ms-transform: scaleX(0);
+            transform: scaleX(0);
+            -webkit-transform-origin: left;
+            -ms-transform-origin: left;
+            transform-origin: left;
+            -webkit-transition: -webkit-transform 0.5s var(--ease-out-expo);
+            transition: transform 0.5s var(--ease-out-expo);
+            border-radius: 50px;
+            z-index: -1;
+        }
+        .btn-outline:hover::before {
+            -webkit-transform: scaleX(1);
+            -ms-transform: scaleX(1);
+            transform: scaleX(1);
+        }
         .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
+        /* ─── Marquee Strip ─── */
+        .marquee-strip {
+            background: var(--warm-red);
+            overflow: hidden;
+            padding: 0.75rem 0;
+            position: relative;
+            white-space: nowrap;
+        }
+        .marquee-track {
+            display: -webkit-inline-flex;
+            display: inline-flex;
+            -webkit-animation: marqueeScroll 30s linear infinite;
+            animation: marqueeScroll 30s linear infinite;
+        }
+        .marquee-track span {
+            color: var(--cream);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0 2.5rem;
+            opacity: 0.9;
+        }
+        .marquee-track span::before {
+            content: '\2726';
+            margin-right: 2.5rem;
+            color: var(--gold);
+            opacity: 0.7;
+        }
+        @-webkit-keyframes marqueeScroll {
+            0% { -webkit-transform: translateX(0); }
+            100% { -webkit-transform: translateX(-50%); }
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ─── Sections ─── */
         section { padding: 5rem 2rem; }
         .section-header { text-align: center; margin-bottom: 3rem; }
-        .section-header h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--brown); }
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            color: var(--brown);
+        }
         .section-header p { color: var(--gray); margin-top: 0.5rem; }
-        .warm-line { width: 50px; height: 3px; background: var(--warm-red); margin: 0.5rem auto; }
+        .warm-line { width: 50px; height: 3px; background: var(--warm-red); margin: 0.5rem auto; border-radius: 2px; }
 
-        /* Menu Highlights */
+        /* Section divider with dot */
+        .section-divider {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            width: 60px; height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+        .section-divider .divider-dot {
+            width: 6px; height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin: 0 1rem;
+        }
+
+        /* ─── Menu Section ─── */
         .menu { background: var(--warm-white); }
         .menu-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem; max-width: 1000px; margin: 0 auto;
         }
         .menu-category {
             background: var(--cream); border-radius: 12px;
-            padding: 2rem; border: 1px solid rgba(212,168,83,0.2);
+            padding: 2rem;
+            border: 1px solid rgba(212,168,83,0.2);
+            -webkit-transition: -webkit-transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo);
+            transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo);
+        }
+        .menu-category:hover {
+            -webkit-transform: translateY(-4px);
+            -ms-transform: translateY(-4px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(74,44,23,0.1);
+            border-color: rgba(212,168,83,0.45);
         }
         .menu-category h3 {
             font-family: 'Playfair Display', serif;
@@ -101,74 +430,194 @@
             border-bottom: 2px solid var(--gold);
         }
         .menu-item {
-            display: flex; justify-content: space-between; align-items: baseline;
-            padding: 0.5rem 0;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: baseline;
+            align-items: baseline;
+            padding: 0.6rem 0.4rem;
+            border-radius: 4px;
+            -webkit-transition: background 0.3s, -webkit-transform 0.3s var(--ease-out-expo);
+            transition: background 0.3s, transform 0.3s var(--ease-out-expo);
         }
-        .menu-item .name { font-weight: 500; font-size: 0.95rem; }
+        .menu-item:hover {
+            background: rgba(212,168,83,0.08);
+            -webkit-transform: translateX(3px);
+            -ms-transform: translateX(3px);
+            transform: translateX(3px);
+        }
+        .menu-item .name { font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
         .menu-item .dots {
-            flex: 1; border-bottom: 1px dotted rgba(74,44,23,0.2);
-            margin: 0 0.5rem; min-width: 2rem;
+            -webkit-flex: 1;
+            flex: 1;
+            border-bottom: 1.5px dotted rgba(74,44,23,0.15);
+            margin: 0 0.75rem; min-width: 2rem;
+            position: relative;
+            top: -3px;
         }
-        .menu-item .price { color: var(--warm-red); font-weight: 700; font-size: 0.95rem; }
+        .menu-item .price {
+            color: var(--warm-red); font-weight: 700; font-size: 0.95rem;
+            white-space: nowrap;
+        }
 
-        /* Atmosphere */
+        /* ─── Atmosphere ─── */
         .atmosphere {
             background: var(--brown); color: var(--cream); text-align: center;
         }
         .atmosphere .section-header h2 { color: var(--cream); }
         .atm-grid {
-            display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            gap: 3rem;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            max-width: 800px; margin: 0 auto;
         }
         .atm-item { text-align: center; max-width: 200px; }
-        .atm-item .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .atm-item .icon {
+            font-size: 2.5rem; margin-bottom: 0.75rem;
+            display: inline-block;
+            -webkit-animation: iconFloat 3s ease-in-out infinite;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        .atm-item:nth-child(2) .icon {
+            -webkit-animation-delay: -0.75s;
+            animation-delay: -0.75s;
+        }
+        .atm-item:nth-child(3) .icon {
+            -webkit-animation-delay: -1.5s;
+            animation-delay: -1.5s;
+        }
+        .atm-item:nth-child(4) .icon {
+            -webkit-animation-delay: -2.25s;
+            animation-delay: -2.25s;
+        }
+
+        @-webkit-keyframes iconFloat {
+            0%, 100% { -webkit-transform: translateY(0); }
+            50% { -webkit-transform: translateY(-8px); }
+        }
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         .atm-item h3 { font-size: 1rem; margin-bottom: 0.3rem; }
         .atm-item p { color: rgba(253,246,236,0.6); font-size: 0.85rem; }
 
-        /* Contact */
+        /* ─── Contact ─── */
         .contact { text-align: center; background: var(--cream); }
-        .contact h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--brown); margin-bottom: 1rem; }
+        .contact h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            color: var(--brown); margin-bottom: 1rem;
+        }
         .contact p { color: var(--gray); margin-bottom: 2rem; }
-        .contact-grid { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        .contact-grid {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            gap: 3rem;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
         .contact-item .label {
             color: var(--warm-red); font-size: 0.75rem;
             letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 0.3rem;
         }
-        .contact-item a { color: var(--charcoal); text-decoration: none; font-size: 1.05rem; }
+        .contact-item a {
+            color: var(--charcoal); text-decoration: none; font-size: 1.05rem;
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+        }
         .contact-item a:hover { color: var(--warm-red); }
 
-        .map-container { max-width: 700px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 2px solid rgba(212,168,83,0.25); }
+        .map-container {
+            max-width: 700px; margin: 0 auto; border-radius: 12px;
+            overflow: hidden; border: 2px solid rgba(212,168,83,0.25);
+        }
         .map-container iframe { width: 100%; height: 300px; border: none; }
 
-        footer { background: var(--brown); color: rgba(253,246,236,0.5); text-align: center; padding: 2rem; font-size: 0.8rem; }
+        /* ─── Footer ─── */
+        footer {
+            background: var(--brown); color: rgba(253,246,236,0.5);
+            text-align: center; padding: 2rem; font-size: 0.8rem;
+        }
 
+        /* ─── Reduced Motion ─── */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                -webkit-animation-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                -webkit-animation-iteration-count: 1 !important;
+                animation-iteration-count: 1 !important;
+                -webkit-transition-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal {
+                opacity: 1;
+                -webkit-transform: none;
+                -ms-transform: none;
+                transform: none;
+            }
+            .marquee-track {
+                -webkit-animation: none !important;
+                animation: none !important;
+            }
+        }
+
+        /* ─── Responsive ─── */
         @media (max-width: 768px) {
             .nav-links { display: none; }
-            .hamburger { display: flex; }
-            .nav-links.active {
-                display: flex; flex-direction: column; position: absolute;
-                top: 100%; left: 0; right: 0;
-                background: var(--brown); padding: 1.5rem 2rem; gap: 1rem;
+            .hamburger {
+                display: -webkit-flex;
+                display: flex;
             }
-            .hero h1 { font-size: 2.5rem; }
+            .nav-links.active {
+                display: -webkit-flex;
+                display: flex;
+                -webkit-flex-direction: column;
+                flex-direction: column;
+                position: absolute;
+                top: 100%; left: 0; right: 0;
+                background: rgba(74,44,23,0.98);
+                -webkit-backdrop-filter: blur(12px);
+                backdrop-filter: blur(12px);
+                padding: 1.5rem 2rem; gap: 1rem;
+            }
+            .hero h1 { font-size: clamp(2rem, 6vw, 2.5rem); }
             .btn-outline { margin-left: 0; margin-top: 1rem; }
             .hero .btn { display: block; width: 100%; text-align: center; }
+            .marquee-track span { font-size: 0.75rem; padding: 0 1.5rem; }
+            .marquee-track span::before { margin-right: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <nav>
+    <nav id="mainNav">
         <div class="nav-brand">Brother's Family</div>
         <ul class="nav-links" id="navLinks">
             <li><a href="#menu">Menu</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Visit</a></li>
         </ul>
-        <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('active')" aria-label="Menu">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
             <span></span><span></span><span></span>
         </button>
     </nav>
 
     <section class="hero">
+        <div class="hero-orb hero-orb--1"></div>
+        <div class="hero-orb hero-orb--2"></div>
+        <div class="hero-orb hero-orb--3"></div>
         <div class="hero-content">
             <div class="hero-emoji">🍽️</div>
             <p class="tagline">Home-Cooked Goodness Since Day One</p>
@@ -177,16 +626,46 @@
             <a href="tel:6192870880" class="btn btn-warm">Call (619) 287-0880</a>
             <a href="#menu" class="btn btn-outline">See Our Menu</a>
         </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
     </section>
 
+    <!-- Marquee Strip -->
+    <div class="marquee-strip">
+        <div class="marquee-track">
+            <span>Classic Eggs & Bacon</span>
+            <span>Huevos Rancheros</span>
+            <span>Carne Asada Plate</span>
+            <span>Pancake Stack</span>
+            <span>Fish Tacos</span>
+            <span>Breakfast Burrito</span>
+            <span>Classic Burger</span>
+            <span>Grilled Chicken Plate</span>
+            <span>Fresh Juice</span>
+            <span>Milkshake</span>
+            <span>Classic Eggs & Bacon</span>
+            <span>Huevos Rancheros</span>
+            <span>Carne Asada Plate</span>
+            <span>Pancake Stack</span>
+            <span>Fish Tacos</span>
+            <span>Breakfast Burrito</span>
+            <span>Classic Burger</span>
+            <span>Grilled Chicken Plate</span>
+            <span>Fresh Juice</span>
+            <span>Milkshake</span>
+        </div>
+    </div>
+
     <section class="menu" id="menu">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>Menu Highlights</h2>
             <div class="warm-line"></div>
             <p>From breakfast classics to hearty dinners</p>
         </div>
         <div class="menu-grid">
-            <div class="menu-category">
+            <div class="menu-category reveal">
                 <h3>Breakfast</h3>
                 <div class="menu-item"><span class="name">Classic Eggs & Bacon</span><span class="dots"></span><span class="price">$9.99</span></div>
                 <div class="menu-item"><span class="name">Pancake Stack</span><span class="dots"></span><span class="price">$8.99</span></div>
@@ -195,7 +674,7 @@
                 <div class="menu-item"><span class="name">French Toast</span><span class="dots"></span><span class="price">$9.49</span></div>
                 <div class="menu-item"><span class="name">Omelette (Build Your Own)</span><span class="dots"></span><span class="price">$11.49</span></div>
             </div>
-            <div class="menu-category">
+            <div class="menu-category reveal">
                 <h3>Lunch & Dinner</h3>
                 <div class="menu-item"><span class="name">Classic Burger</span><span class="dots"></span><span class="price">$12.99</span></div>
                 <div class="menu-item"><span class="name">Grilled Chicken Plate</span><span class="dots"></span><span class="price">$13.99</span></div>
@@ -204,7 +683,7 @@
                 <div class="menu-item"><span class="name">Club Sandwich</span><span class="dots"></span><span class="price">$11.99</span></div>
                 <div class="menu-item"><span class="name">Soup & Salad Combo</span><span class="dots"></span><span class="price">$10.49</span></div>
             </div>
-            <div class="menu-category">
+            <div class="menu-category reveal">
                 <h3>Sides & Drinks</h3>
                 <div class="menu-item"><span class="name">French Fries</span><span class="dots"></span><span class="price">$4.49</span></div>
                 <div class="menu-item"><span class="name">Rice & Beans</span><span class="dots"></span><span class="price">$3.99</span></div>
@@ -216,28 +695,33 @@
         </div>
     </section>
 
+    <!-- Section Divider -->
+    <div class="section-divider">
+        <div class="divider-dot"></div>
+    </div>
+
     <section class="atmosphere" id="about">
-        <div class="section-header">
+        <div class="section-header reveal">
             <h2>Why Families Love Us</h2>
             <div class="warm-line"></div>
         </div>
         <div class="atm-grid">
-            <div class="atm-item">
+            <div class="atm-item reveal">
                 <div class="icon">👨‍👩‍👧‍👦</div>
                 <h3>Family Friendly</h3>
                 <p>A warm, welcoming space for the whole family</p>
             </div>
-            <div class="atm-item">
+            <div class="atm-item reveal">
                 <div class="icon">🍳</div>
                 <h3>Fresh & Homemade</h3>
                 <p>Made from scratch with quality ingredients</p>
             </div>
-            <div class="atm-item">
+            <div class="atm-item reveal">
                 <div class="icon">💰</div>
                 <h3>Generous Portions</h3>
                 <p>Real meals at honest, affordable prices</p>
             </div>
-            <div class="atm-item">
+            <div class="atm-item reveal">
                 <div class="icon">☀️</div>
                 <h3>Open Daily</h3>
                 <p>Breakfast, lunch, and dinner every day</p>
@@ -245,10 +729,15 @@
         </div>
     </section>
 
+    <!-- Section Divider -->
+    <div class="section-divider">
+        <div class="divider-dot"></div>
+    </div>
+
     <section class="contact" id="contact">
-        <h2>Come Hungry, Leave Happy</h2>
-        <p>Walk-ins welcome. Call ahead for large parties.</p>
-        <div class="contact-grid">
+        <h2 class="reveal">Come Hungry, Leave Happy</h2>
+        <p class="reveal">Walk-ins welcome. Call ahead for large parties.</p>
+        <div class="contact-grid reveal">
             <div class="contact-item">
                 <div class="label">Phone</div>
                 <div><a href="tel:6192870880">(619) 287-0880</a></div>
@@ -262,7 +751,7 @@
                 <div>Daily: 7AM–9PM</div>
             </div>
         </div>
-        <div class="map-container">
+        <div class="map-container reveal">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13380.0!2d-117.07!3d32.79!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d95802c4e9de7b%3A0x1234567890abcdef!2sSan%20Diego%2C%20CA%2092120!5e0!3m2!1sen!2sus!4v1" allowfullscreen loading="lazy"></iframe>
         </div>
     </section>
@@ -270,5 +759,94 @@
     <footer>
         <p>&copy; 2026 Brother's Family Restaurant. All rights reserved. | San Diego, CA</p>
     </footer>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ─── Nav: transparent -> solid on scroll ───
+        var nav = document.getElementById('mainNav');
+        var scrollThreshold = 80;
+
+        function handleNavScroll() {
+            if (window.pageYOffset > scrollThreshold) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        }
+        window.addEventListener('scroll', handleNavScroll, { passive: true });
+        handleNavScroll();
+
+        // ─── Hamburger toggle + close on link click ───
+        var hamburgerBtn = document.getElementById('hamburgerBtn');
+        var navLinks = document.getElementById('navLinks');
+
+        hamburgerBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+
+        // ─── Smooth anchor scroll + close mobile menu ───
+        var anchorLinks = document.querySelectorAll('a[href^="#"]');
+        for (var i = 0; i < anchorLinks.length; i++) {
+            anchorLinks[i].addEventListener('click', function(e) {
+                var targetId = this.getAttribute('href');
+                if (targetId && targetId.length > 1) {
+                    var target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        navLinks.classList.remove('active');
+                        var navHeight = nav.offsetHeight;
+                        var targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                        window.scrollTo({
+                            top: targetPos,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        }
+
+        // ─── Scroll Reveal with IntersectionObserver + staggered delays ───
+        var revealEls = document.querySelectorAll('.reveal');
+
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        var el = entry.target;
+                        var delay = el.getAttribute('data-delay') || 0;
+                        setTimeout(function() {
+                            el.classList.add('visible');
+                        }, parseInt(delay, 10));
+                        observer.unobserve(el);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            // Assign staggered delays to sibling .reveal elements
+            var parents = [];
+            revealEls.forEach(function(el) {
+                var parent = el.parentElement;
+                if (parents.indexOf(parent) === -1) {
+                    parents.push(parent);
+                    var children = parent.querySelectorAll(':scope > .reveal');
+                    children.forEach(function(child, idx) {
+                        child.setAttribute('data-delay', idx * 120);
+                    });
+                }
+                observer.observe(el);
+            });
+        } else {
+            // Fallback: just show everything
+            revealEls.forEach(function(el) {
+                el.classList.add('visible');
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
